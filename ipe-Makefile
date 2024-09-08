@@ -1,0 +1,169 @@
+# --------------------------------------------------------------------
+# Makefile for Ipe
+# --------------------------------------------------------------------
+
+OBJDIR = $(BUILDDIR)/obj
+include common.mak
+
+TARGET = $(call exe_target,ipe)
+
+CPPFLAGS += -Iinclude -Iipecanvas -Iipecairo -Iipelua -Iipeui \
+	-DIPE_GSL $(GSL_CFLAGS) $(JPEG_CFLAGS) $(PNG_CFLAGS) $(SPIRO_CFLAGS) \
+	$(LUA_CFLAGS) $(UI_CFLAGS) $(CAIRO_CFLAGS) $(ZLIB_CFLAGS) $(FREETYPE_CFLAGS)
+LIBS += -L$(buildlib) $(GSL_LIBS) $(JPEG_LIBS) $(PNG_LIBS) $(SPIRO_LIBS) \
+	$(LUA_LIBS) $(UI_LIBS) $(CAIRO_LIBS) $(ZLIB_LIBS) $(DL_LIBS) $(FREETYPE_LIBS)
+# -lipecanvas -lipecairo -lipelua -lipe -lipeui
+ifdef IPE_NO_IPELIB_VERSION_CHECK
+CPPFLAGS += -DIPE_NO_IPELIB_VERSION_CHECK
+endif
+
+ifdef IPEBUNDLE
+CPPFLAGS += -DIPEBUNDLE
+else
+CPPFLAGS += -DIPELETDIR=\"$(IPELETDIR)\"
+CPPFLAGS += -DIPELUADIR=\"$(IPELUADIR)\"
+CPPFLAGS += -DIPEICONDIR=\"$(IPEICONDIR)\"
+CPPFLAGS += -DIPEDOCDIR=\"$(IPEDOCDIR)\"
+CPPFLAGS += -DIPESTYLEDIR=\"$(IPESTYLEDIR)\"
+endif
+
+all: $(TARGET)
+
+sources	= ipe/tools.cpp ipe/appui.cpp ipe/uilua.cpp
+qt_sources	= ipe/main_qt.cpp ipe/appui_qt.cpp ipe/controls_qt.cpp
+moc_headers	= ipe/appui_qt.h ipe/controls_qt.h
+win_sources	= ipe/main_win.cpp ipe/appui_win.cpp ipe/pathview_win.cpp ipe/pagesorter_win.cpp
+gtk_sources	= ipe/main_gtk.cpp ipe/appui_gtk.cpp
+cocoa_sources	= ipe/main_cocoa.cpp ipe/appui_cocoa.cpp ipe/controls_cocoa.cpp ipe/pagesorter_cocoa.cpp
+
+# ipecairo
+sources += \
+	ipecairo/ipecairopainter.cpp \
+	ipecairo/ipefonts.cpp	\
+	ipecairo/ipethumbs.cpp
+
+# ipecanvas
+sources += ipecanvas/ipetool.cpp ipecanvas/ipecanvas.cpp ipecanvas/ipepdfview.cpp
+cocoa_sources += ipecanvas/ipecanvas_cocoa.cpp ipecanvas/ipeselector_cocoa.cpp ipecanvas/ipepdfview_cocoa.cpp
+win_sources += ipecanvas/ipecanvas_win.cpp ipecanvas/ipeselector_win.cpp ipecanvas/ipepdfview_win.cpp
+gtk_sources += ipecanvas/ipecanvas_gtk.cpp ipecanvas/ipeselector_gtk.cpp
+qt_sources += ipecanvas/ipecanvas_qt.cpp ipecanvas/ipeselector_qt.cpp ipecanvas/ipepdfview_qt.cpp
+moc_headers	+= ipecanvas/ipecanvas_qt.h ipecanvas/ipeselector_qt.h ipecanvas/ipepdfview_qt.h
+
+# ipelib
+sources += \
+	ipelib/ipebase.cpp \
+	ipelib/ipeplatform.cpp \
+	ipelib/ipegeo.cpp \
+	ipelib/ipexml.cpp \
+	ipelib/ipeattributes.cpp \
+	ipelib/ipebitmap.cpp \
+	ipelib/ipeshape.cpp \
+	ipelib/ipegroup.cpp \
+	ipelib/ipeimage.cpp \
+	ipelib/ipetext.cpp \
+	ipelib/ipepath.cpp \
+	ipelib/ipereference.cpp \
+	ipelib/ipeobject.cpp \
+	ipelib/ipefactory.cpp \
+	ipelib/ipestdstyles.cpp \
+	ipelib/ipeiml.cpp \
+	ipelib/ipepage.cpp \
+	ipelib/ipepainter.cpp \
+	ipelib/ipetoolbase.cpp \
+	ipelib/ipepdfparser.cpp \
+	ipelib/ipepdfwriter.cpp \
+	ipelib/iperesources.cpp \
+	ipelib/ipestyle.cpp \
+	ipelib/ipesnap.cpp \
+	ipelib/ipeutils.cpp \
+	ipelib/ipelatex.cpp \
+	ipelib/ipedoc.cpp \
+	ipelib/ipebitmap_unix.cpp
+
+# ipelua
+sources += \
+	ipelua/ipelib.cpp \
+	ipelua/ipeluageo.cpp \
+	ipelua/ipeluaobj.cpp \
+	ipelua/ipeluastyle.cpp \
+	ipelua/ipeluapage.cpp \
+	ipelua/ipeluaipelet.cpp
+
+# ipeui
+sources += ipeui/ipeui_common.cpp
+cocoa_sources += ipeui/ipeui_cocoa.cpp
+qt_sources += ipeui/ipeui_qt.cpp
+moc_headers += ipeui/ipeui_qt.h
+win_sources += ipeui/ipeui_win.cpp
+gtk_sources += ipeui/ipeui_gtk.cpp
+
+MAKE_DIRS:
+	mkdir -p ../build/bin
+	mkdir -p ../build/obj/ipe
+	mkdir -p ../build/obj/ipecairo
+	mkdir -p ../build/obj/ipecanvas
+	mkdir -p ../build/obj/ipelib
+	mkdir -p ../build/obj/ipelua
+	mkdir -p ../build/obj/ipeui
+
+$(TARGET): MAKE_DIRS $(objects)
+	$(CXX) $(LDFLAGS) -o $@ $(objects) $(LIBS)
+
+clean:
+	@-rm -f $(objects) $(resource) $(TARGET) $(DEPEND)
+
+$(DEPEND): Makefile
+	$(MAKE_DEPEND)
+
+-include $(DEPEND)
+
+ifdef IPEAPP
+
+app:
+	$(INSTALL_DIR) $(RESOURCEDIR)/scripts
+	$(INSTALL_DIR) $(RESOURCEDIR)/lua
+	$(INSTALL_DIR) $(RESOURCEDIR)/styles
+	$(INSTALL_DIR) $(RESOURCEDIR)/icons
+#	$(INSTALL_DIR) $(BUNDLEDIR)/SharedSupport/doc
+	$(INSTALL_SCRIPTS) ../../scripts/* $(RESOURCEDIR)/scripts
+	$(INSTALL_FILES) lua/*.lua $(RESOURCEDIR)/lua
+	$(INSTALL_FILES) ../../styles/basic.isy $(RESOURCEDIR)/styles
+	$(INSTALL_FILES) ../../styles/colors.isy $(RESOURCEDIR)/styles
+	$(INSTALL_FILES) ../../styles/beamer.isy $(RESOURCEDIR)/styles
+	$(INSTALL_FILES) ../../styles/presentation.isy $(RESOURCEDIR)/styles
+	$(INSTALL_FILES) ../../styles/decorations.isy $(RESOURCEDIR)/styles
+	$(INSTALL_FILES) ../../styles/note-paper.isy $(RESOURCEDIR)/styles
+	$(INSTALL_FILES) ../../styles/tikz-shapes.isy $(RESOURCEDIR)/styles
+	$(INSTALL_FILES) ../../styles/imperial.isy $(RESOURCEDIR)/styles
+	$(INSTALL_FILES) ../../styles/right-to-left.isy $(RESOURCEDIR)/styles
+	$(INSTALL_FILES) ../../styles/arabic.isy $(RESOURCEDIR)/styles
+	$(INSTALL_FILES) Info.plist $(BUNDLEDIR)
+	$(INSTALL_FILES) $(BUILDDIR)/ipe.icns $(RESOURCEDIR)
+	$(INSTALL_FILES) ../../artwork/icons.ipe $(RESOURCEDIR)/icons
+#	$(INSTALL_FILES) $(manualdir)/* $(BUNDLEDIR)/SharedSupport/doc
+#	$(INSTALL_FILES) $(doxydir)/* $(BUNDLEDIR)/SharedSupport/doc
+
+endif
+
+install: $(TARGET)
+	$(INSTALL_DIR) $(INSTALL_ROOT)$(IPEBINDIR) 
+	$(INSTALL_DIR) $(INSTALL_ROOT)$(IPEMANDIR) 
+#	$(INSTALL_DIR) $(INSTALL_ROOT)$(IPEDOCDIR) 
+	$(INSTALL_DIR) $(INSTALL_ROOT)$(IPELUADIR) 
+	$(INSTALL_DIR) $(INSTALL_ROOT)$(IPESTYLEDIR) 
+	$(INSTALL_DIR) $(INSTALL_ROOT)$(IPESCRIPTDIR) 
+	$(INSTALL_DIR) $(INSTALL_ROOT)$(IPEICONDIR)
+	$(INSTALL_PROGRAMS) $(TARGET) $(INSTALL_ROOT)$(IPEBINDIR)
+	$(INSTALL_SCRIPTS) ../../scripts/* $(INSTALL_ROOT)$(IPESCRIPTDIR)
+	$(INSTALL_FILES) ../../man/*.1 $(INSTALL_ROOT)$(IPEMANDIR) 
+#	$(INSTALL_FILES) $(manualdir)/* $(INSTALL_ROOT)$(IPEDOCDIR)
+#	test -d $(doxydir) && \
+#		$(INSTALL_FILES) $(doxydir)/* $(INSTALL_ROOT)$(IPEDOCDIR) || true
+	$(INSTALL_FILES) lua/*.lua $(INSTALL_ROOT)$(IPELUADIR)
+	$(INSTALL_FILES) ../../styles/*.isy $(INSTALL_ROOT)$(IPESTYLEDIR)
+	$(INSTALL_FILES) ../../artwork/icons.ipe $(INSTALL_ROOT)$(IPEICONDIR)
+	$(INSTALL_FILES) ../../artwork/ipe_logo.ipe $(INSTALL_ROOT)$(IPEICONDIR)
+	$(INSTALL_FILES) ../../artwork/ipe.iconset/icon_128x128.png $(INSTALL_ROOT)$(IPEICONDIR)
+
+# --------------------------------------------------------------------
