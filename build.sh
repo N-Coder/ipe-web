@@ -9,7 +9,7 @@ source ./env.sh
 
 ## install dependencies
 apt-get update
-apt-get install -y build-essential checkinstall curl git python3 python3-pip vim pkg-config autoconf libtool ccache
+apt-get install -y build-essential curl git python3 python3-pip pkg-config autoconf libtool ccache vim
 pip install --break-system-packages cmake meson ninja
 
 
@@ -44,6 +44,17 @@ emconfigure ./configure --host=${CHOST} --with-binconfigs=no --prefix=$PREFIX --
 emmake make
 emmake make install
 
+## install libjpeg-turbo
+cd $WORK_DIR
+[ -d "libjpeg-turbo" ] || git clone https://github.com/libjpeg-turbo/libjpeg-turbo.git
+cd libjpeg-turbo
+git checkout 3.0.3
+mkdir build
+cd build
+emmake cmake -G"Unix Makefiles" -DCMAKE_INSTALL_PREFIX=$PREFIX ..
+emmake make
+emmake make install
+
 ## install gsl
 cd $WORK_DIR
 [ -d "gsl" ] || git clone git://git.savannah.gnu.org/gsl.git
@@ -51,7 +62,7 @@ cd gsl
 git checkout release-2-8
 emconfigure autoreconf -i
 emconfigure ./configure --prefix=$PREFIX
-emmake make
+emmake make LDFLAGS="$LDFLAGS -all-static" # https://stackoverflow.com/a/67169806
 emmake make install
 
 ## install lua
@@ -60,14 +71,11 @@ cd $WORK_DIR
 [ -d "lua-5.4.7" ] || tar zxf lua-5.4.7.tar.gz
 cd lua-5.4.7
 sed "s#INSTALL_TOP= /usr/local#INSTALL_TOP= $PREFIX#g" -i Makefile
-sed "s#CC= gcc -std=gnu99#CC= emcc -std=gnu99#g" -i src/Makefile
+sed "s#CC= gcc -std=gnu99#CC= emcc -std=gnu99 $CFLAGS#g" -i src/Makefile
 sed "s#AR= ar rcu#AR= emar rcu#g" -i src/Makefile
 sed "s#RANLIB= ranlib#RANLIB= emar s#g" -i src/Makefile
 emmake make
 emmake make install
-# emmake make pc > $PREFIX/lib/pkgconfig/lua.pc
-# echo -e '\nName: lua\nDescription: lua library\nVersion: 5.4.7\n' >> $PREFIX/lib/pkgconfig/lua.pc
-# echo -e 'Requires:\nLibs: -L${libdir} -L${sharedlibdir} -llua\nCflags: -I${includedir}' >> $PREFIX/lib/pkgconfig/lua.pc
 
 ## install libspiro
 cd $WORK_DIR
@@ -113,47 +121,40 @@ cd $WORK_DIR
 # once for the host tools
 cd qt-host
 ./configure -prefix $PWD/qtbase
-cmake --build . --parallel
-# and once again cross compile the wasm library
-cd ../qt-wasm
+cmake --build . -t qtbase -t qtdeclarative --parallel
+
 $EMSDK/emsdk install 3.1.50 # version required for QT 6.7 https://doc.qt.io/qt-6/wasm.html
 $EMSDK/emsdk activate 3.1.50
 source $EMSDK/emsdk_env.sh
-./configure -qt-host-path ../qt-host/qtbase -platform wasm-emscripten -prefix $PREFIX -feature-thread # -system-zlib -qt-libjpeg -system-libpng -system-freetype
+
+# and once again cross compile the wasm library
+cd ../qt-wasm
+./configure -qt-host-path ../qt-host/qtbase -platform wasm-emscripten -prefix $PREFIX -feature-thread -system-zlib -system-libjpeg -system-libpng -system-freetype
 cmake --build . --parallel
-# while ! installout=$(cmake --install . 2>&1 > /dev/null); do
-#     echo $installout
-#     line=$(echo "$installout" | grep " cmake_install.cmake:" | grep -Eo "[0-9]+")
-#     echo $line
-#     sed -i "$line s/^/#/" cmake_install.cmake
-# done
 cmake --install .
 
-# cd
-# cp ./qt-host/qtbase/lib/pkgconfig/Qt*.pc $PREFIX/lib/pkgconfig/
-# sed "s#prefix=/root/qt-host/qtbase#prefix=$PREFIX#g" -i Qt*.pc
 $EMSDK/emsdk install latest
 $EMSDK/emsdk activate latest
 source $EMSDK/emsdk_env.sh
 
-embuilder build libjpeg
 
 ## install ipe
 cd $WORK_DIR
 [ -d "ipe" ] || git clone https://github.com/otfried/ipe.git
 cd ipe
 git checkout v7.2.30
-cd src
-sed "s#CXX = g++#CXX = em++ --use-port=libjpeg#g" -i config.mak
-sed "s#LUA_PACKAGE   ?= lua5.4#LUA_PACKAGE   ?= lua#g" -i config.mak
-sed "s#IPESRCDIR ?= ..#IPESRCDIR ?= .#g" -i common.mak
-sed 's#moc_sources  = $(addprefix moc_, $(subst .h,.cpp,$(moc_headers)))#moc_sources  = $(subst /,/moc_,$(subst .h,.cpp,$(moc_headers)))#g' -i common.mak
-sed "s#jpeg_read_header(&cinfo, 1);#jpeg_read_header(\&cinfo, TRUE);#g" -i ipelib/ipebitmap_unix.cpp
-cp ./Makefile ./Makefile.bak
-# emmake make all
-# maybe add /root/prefix/lib/liblua.a manually to emcc invocation
+sed "s#jpeg_read_header(&cinfo, 1);#jpeg_read_header(\&cinfo, TRUE);#g" -i src/ipelib/ipebitmap_unix.cpp
 
-cd ..
+# cd src
+# sed "s#CXX = g++#CXX = em++ --use-port=libjpeg#g" -i config.mak
+# sed "s#LUA_PACKAGE   ?= lua5.4#LUA_PACKAGE   ?= lua#g" -i config.mak
+# sed "s#IPESRCDIR ?= ..#IPESRCDIR ?= .#g" -i common.mak
+# sed 's#moc_sources  = $(addprefix moc_, $(subst .h,.cpp,$(moc_headers)))#moc_sources  = $(subst /,/moc_,$(subst .h,.cpp,$(moc_headers)))#g' -i common.mak
+# cp ./Makefile ./Makefile.bak
+# emmake make all
+# cd ..
+## maybe add /root/prefix/lib/liblua.a manually to emcc invocation
+
 cp $SCRIPT_DIR/CMakeLists.txt .
 $WORK_DIR/qt-wasm/qtbase/bin/qt-cmake .
 cmake --build .

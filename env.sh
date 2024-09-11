@@ -15,12 +15,12 @@ export EM_PKG_CONFIG_LIBDIR=$PREFIX/lib/
 export PKG_CONFIG_LIBDIR=$PREFIX/lib/
 export CHOST="wasm32-unknown-linux"
 export CFLAGS="-s USE_PTHREADS"
-export LDFLAGS="-lpthread -all-static"
+export LDFLAGS="-lpthread"
 export ax_cv_c_float_words_bigendian=no
 export MESON_CROSS="$SCRIPT_DIR/emscripten-cross.txt"
 export IPEPREFIX=$PREFIX/usr/local
 export EMSDK_KEEP_DOWNLOADS=1
-export EMSDK="$SCRIPT_DIR/emsdk" # TODO
+export EMSDK="$WORK_DIR/emsdk"
 
 
 mkdir -p $SCRIPT_DIR
