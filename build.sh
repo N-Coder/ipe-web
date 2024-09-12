@@ -17,8 +17,8 @@ pip install --break-system-packages cmake meson ninja
 cd $WORK_DIR
 [ -d "emsdk" ] || git clone https://github.com/emscripten-core/emsdk.git
 cd emsdk
-./emsdk install latest
-./emsdk activate latest
+./emsdk install 3.1.50 # version required for QT 6.7 https://doc.qt.io/qt-6/wasm.html
+./emsdk activate 3.1.50
 source ./emsdk_env.sh
 
 
@@ -124,19 +124,11 @@ cd qt-host
 CFLAGS="" LDFLAGS="" ./configure -prefix $PWD/qtbase -no-opengl
 CFLAGS="" LDFLAGS="" cmake --build . -t qtbase -t qtdeclarative -t lrelease --parallel
 
-$EMSDK/emsdk install 3.1.50 # version required for QT 6.7 https://doc.qt.io/qt-6/wasm.html
-$EMSDK/emsdk activate 3.1.50
-source $EMSDK/emsdk_env.sh
-
 # and once again cross compile the wasm library
 cd ../qt-wasm
 ./configure -qt-host-path ../qt-host/qtbase -platform wasm-emscripten -prefix $PREFIX -feature-thread # -system-zlib -qt-libjpeg -system-libpng -system-freetype
 cmake --build . --parallel
 cmake --install .
-
-$EMSDK/emsdk install latest
-$EMSDK/emsdk activate latest
-source $EMSDK/emsdk_env.sh
 
 embuilder build libjpeg
 
@@ -158,7 +150,7 @@ sed "s#jpeg_read_header(&cinfo, 1);#jpeg_read_header(\&cinfo, TRUE);#g" -i src/i
 ## maybe add /root/prefix/lib/liblua.a manually to emcc invocation
 
 cp $SCRIPT_DIR/CMakeLists.txt .
-$WORK_DIR/qt-wasm/qtbase/bin/qt-cmake .
+$WORK_DIR/qt-wasm/qtbase/bin/qt-cmake . -DCMAKE_MODULE_PATH=$WORK_DIR/qt-wasm/qtbase/cmake
 cmake --build .
 
 # emcc -o final.html -sFETCH ../build/lib/libipe.so ../build/obj/ipetoipe/ipetoipe.o  $PREFIX/lib/libgslcblas.a $PREFIX/lib/libgsl.a --emrun --embed-file schedule.ipe --proxy-to-worker

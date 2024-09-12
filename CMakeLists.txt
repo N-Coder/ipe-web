@@ -88,5 +88,4 @@ target_include_directories(ipe PRIVATE /root/emsdk/upstream/emscripten/cache/sys
 target_include_directories(ipe PRIVATE src/include src/ipe src/ipecairo src/ipecanvas src/ipeui src/ipelib src/ipelua)
 target_link_libraries(ipe PRIVATE Qt6::Widgets Qt6::Svg)
 
-target_link_libraries(ipe PRIVATE /root/emsdk/upstream/emscripten/cache/sysroot/lib/wasm32-emscripten/libjpeg.a)
 target_link_libraries(ipe PRIVATE /root/prefix/lib/libpng.a /root/prefix/lib/libz.a /root/prefix/lib/liblua.a /root/prefix/lib/libgsl.a /root/prefix/lib/libcairo.a /root/prefix/lib/libfreetype.a /root/prefix/lib/libspiro.a /root/prefix/lib/libpixman-1.a)
