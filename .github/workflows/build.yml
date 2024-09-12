@@ -13,7 +13,7 @@ jobs:
 
     - uses: actions/cache@v4
       with:
-        key: kitchensink
+        key: kitchensink-${{ github.run_id }}.${{ github.run_attempt }}
         path: |
           ./download
           ./prefix
