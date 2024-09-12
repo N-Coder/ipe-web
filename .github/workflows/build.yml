@@ -1,0 +1,21 @@
+name: Build
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: debian
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/cache@v4
+      with:
+        key: kitchensink
+        path: |
+          ./download
+          ./prefix
+
+    - run: ./build.sh
