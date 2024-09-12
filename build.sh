@@ -116,6 +116,7 @@ meson install -C _build
 cd $WORK_DIR
 [ -f "qt-everywhere-src-6.7.2.tar.xz" ] || curl -L -R -O https://download.qt.io/official_releases/qt/6.7/6.7.2/single/qt-everywhere-src-6.7.2.tar.xz
 [ -d "qt-everywhere-src-6.7.2" ] || tar xaf qt-everywhere-src-6.7.2.tar.xz
+rm -rf qt-everywhere-src-6.7.2/qtwebengine
 [ -d "qt-host" ] || cp -r qt-everywhere-src-6.7.2 qt-host
 [ -d "qt-wasm" ] || cp -r qt-everywhere-src-6.7.2 qt-wasm
 # once for the host tools
