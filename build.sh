@@ -115,13 +115,13 @@ meson install -C _build
 ## install qt-wasm
 cd $WORK_DIR
 [ -f "qt-everywhere-src-6.7.2.tar.xz" ] || curl -L -R -O https://download.qt.io/official_releases/qt/6.7/6.7.2/single/qt-everywhere-src-6.7.2.tar.xz
-[ -d "qt-host" ] || tar xaf qt-everywhere-src-6.7.2.tar.xz
-[ -d "qt-host" ] || mv qt-everywhere-src-6.7.2 qt-host
-[ -d "qt-wasm" ] || cp -r qt-host qt-wasm
+[ -d "qt-everywhere-src-6.7.2" ] || tar xaf qt-everywhere-src-6.7.2.tar.xz
+[ -d "qt-host" ] || cp -r qt-everywhere-src-6.7.2 qt-host
+[ -d "qt-wasm" ] || cp -r qt-everywhere-src-6.7.2 qt-wasm
 # once for the host tools
 cd qt-host
-./configure -prefix $PWD/qtbase
-cmake --build . -t qtbase -t qtdeclarative --parallel
+CFLAGS="" LDFLAGS="" ./configure -prefix $PWD/qtbase -no-opengl
+CFLAGS="" LDFLAGS="" cmake --build . -t qtbase -t qtdeclarative -t lrelease --parallel
 
 $EMSDK/emsdk install 3.1.50 # version required for QT 6.7 https://doc.qt.io/qt-6/wasm.html
 $EMSDK/emsdk activate 3.1.50
@@ -129,7 +129,7 @@ source $EMSDK/emsdk_env.sh
 
 # and once again cross compile the wasm library
 cd ../qt-wasm
-./configure -qt-host-path ../qt-host/qtbase -platform wasm-emscripten -prefix $PREFIX -feature-thread -system-zlib -system-libjpeg -system-libpng -system-freetype
+./configure -qt-host-path ../qt-host/qtbase -platform wasm-emscripten -prefix $PREFIX -feature-thread # -system-zlib -qt-libjpeg -system-libpng -system-freetype
 cmake --build . --parallel
 cmake --install .
 
