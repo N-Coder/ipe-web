@@ -45,15 +45,15 @@ emmake make
 emmake make install
 
 ## install libjpeg-turbo
-cd $WORK_DIR
-[ -d "libjpeg-turbo" ] || git clone https://github.com/libjpeg-turbo/libjpeg-turbo.git
-cd libjpeg-turbo
-git checkout 3.0.3
-mkdir build
-cd build
-emmake cmake -G"Unix Makefiles" -DCMAKE_INSTALL_PREFIX=$PREFIX ..
-emmake make
-emmake make install
+# cd $WORK_DIR
+# [ -d "libjpeg-turbo" ] || git clone https://github.com/libjpeg-turbo/libjpeg-turbo.git
+# cd libjpeg-turbo
+# git checkout 3.0.3
+# [ -d "build" ] || mkdir build
+# cd build
+# emmake cmake -G"Unix Makefiles" -DCMAKE_SIZEOF_VOID_P=8 -DCMAKE_INSTALL_PREFIX=$PREFIX ..
+# emmake make
+# emmake make install
 
 ## install gsl
 cd $WORK_DIR
@@ -137,6 +137,7 @@ $EMSDK/emsdk install latest
 $EMSDK/emsdk activate latest
 source $EMSDK/emsdk_env.sh
 
+embuilder build libjpeg
 
 ## install ipe
 cd $WORK_DIR
