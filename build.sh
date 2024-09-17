@@ -54,6 +54,7 @@ emmake make install
 # emmake cmake -G"Unix Makefiles" -DCMAKE_SIZEOF_VOID_P=8 -DCMAKE_INSTALL_PREFIX=$PREFIX ..
 # emmake make
 # emmake make install
+embuilder build libjpeg
 
 ## install gsl
 cd $WORK_DIR
@@ -129,8 +130,6 @@ cd ../qt-wasm
 ./configure -qt-host-path ../qt-host/qtbase -platform wasm-emscripten -prefix $PREFIX -feature-thread # -system-zlib -qt-libjpeg -system-libpng -system-freetype
 cmake --build . --parallel
 cmake --install .
-
-embuilder build libjpeg
 
 ## install ipe
 cd $WORK_DIR
