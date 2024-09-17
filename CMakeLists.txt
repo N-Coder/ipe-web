@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
 
-list(APPEND CMAKE_MODULE_PATH /root/qt-wasm/qtbase/cmake)
-
 project(ipe VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -69,23 +67,24 @@ qt_add_executable(ipe
 
 set(IPEVERS "7.2.30")
 set(PREFIX "/root/prefix")
-set(IPEPREFIX "$PREFIX/usr/local")
+set(IPEPREFIX "${PREFIX}/usr/local")
+set(EMSDK "/root/download/emsdk")
 
 target_compile_definitions(ipe PRIVATE IPEUI_QT)
-target_compile_definitions(ipe PRIVATE IPEBINDIR="$IPEPREFIX/bin")
-target_compile_definitions(ipe PRIVATE IPELIBDIR="$IPEPREFIX/lib")
-target_compile_definitions(ipe PRIVATE IPEHEADERDIR="$IPEPREFIX/include")
-target_compile_definitions(ipe PRIVATE IPELETDIR="$IPEPREFIX/lib/ipe/$IPEVERS/ipelets")
-target_compile_definitions(ipe PRIVATE IPELUADIR="$IPEPREFIX/share/ipe/$IPEVERS/lua")
-target_compile_definitions(ipe PRIVATE IPESCRIPTDIR="$IPEPREFIX/share/ipe/$IPEVERS/scripts")
-target_compile_definitions(ipe PRIVATE IPESTYLEDIR="$IPEPREFIX/share/ipe/$IPEVERS/styles")
-target_compile_definitions(ipe PRIVATE IPEICONDIR="$IPEPREFIX/share/ipe/$IPEVERS/icons")
-target_compile_definitions(ipe PRIVATE IPEDOCDIR="$IPEPREFIX/share/ipe/$IPEVERS/doc")
-target_compile_definitions(ipe PRIVATE IPEMANDIR="$IPEPREFIX/share/man/man1")
+target_compile_definitions(ipe PRIVATE IPEBINDIR="${IPEPREFIX}/bin")
+target_compile_definitions(ipe PRIVATE IPELIBDIR="${IPEPREFIX}/lib")
+target_compile_definitions(ipe PRIVATE IPEHEADERDIR="${IPEPREFIX}/include")
+target_compile_definitions(ipe PRIVATE IPELETDIR="${IPEPREFIX}/lib/ipe/${IPEVERS}/ipelets")
+target_compile_definitions(ipe PRIVATE IPELUADIR="${IPEPREFIX}/share/ipe/${IPEVERS}/lua")
+target_compile_definitions(ipe PRIVATE IPESCRIPTDIR="${IPEPREFIX}/share/ipe/${IPEVERS}/scripts")
+target_compile_definitions(ipe PRIVATE IPESTYLEDIR="${IPEPREFIX}/share/ipe/${IPEVERS}/styles")
+target_compile_definitions(ipe PRIVATE IPEICONDIR="${IPEPREFIX}/share/ipe/${IPEVERS}/icons")
+target_compile_definitions(ipe PRIVATE IPEDOCDIR="${IPEPREFIX}/share/ipe/${IPEVERS}/doc")
+target_compile_definitions(ipe PRIVATE IPEMANDIR="${IPEPREFIX}/share/man/man1")
 
-target_include_directories(ipe PRIVATE /root/prefix/include/ /root/prefix/include/cairo /root/prefix/include/freetype2)
-target_include_directories(ipe PRIVATE /root/emsdk/upstream/emscripten/cache/sysroot/include/)
+target_include_directories(ipe PRIVATE "${PREFIX}/include" "${PREFIX}/include/cairo" "${PREFIX}/include/freetype2")
+target_include_directories(ipe PRIVATE "${EMSDK}/upstream/emscripten/cache/sysroot/include/")
 target_include_directories(ipe PRIVATE src/include src/ipe src/ipecairo src/ipecanvas src/ipeui src/ipelib src/ipelua)
 target_link_libraries(ipe PRIVATE Qt6::Widgets Qt6::Svg)
 
-target_link_libraries(ipe PRIVATE /root/prefix/lib/libpng.a /root/prefix/lib/libz.a /root/prefix/lib/liblua.a /root/prefix/lib/libgsl.a /root/prefix/lib/libcairo.a /root/prefix/lib/libfreetype.a /root/prefix/lib/libspiro.a /root/prefix/lib/libpixman-1.a)
+target_link_libraries(ipe PRIVATE "${PREFIX}/lib/libpng.a" "${PREFIX}/lib/libz.a" "${PREFIX}/lib/liblua.a" "${PREFIX}/lib/libgsl.a" "${PREFIX}/lib/libcairo.a" "${PREFIX}/lib/libfreetype.a" "${PREFIX}/lib/libspiro.a" "${PREFIX}/lib/libpixman-1.a")
