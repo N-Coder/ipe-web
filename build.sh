@@ -138,20 +138,10 @@ cd $WORK_DIR
 cd ipe
 git checkout v7.2.30
 sed "s#jpeg_read_header(&cinfo, 1);#jpeg_read_header(\&cinfo, TRUE);#g" -i src/ipelib/ipebitmap_unix.cpp
-
-# cd src
-# sed "s#CXX = g++#CXX = em++ --use-port=libjpeg#g" -i config.mak
-# sed "s#LUA_PACKAGE   ?= lua5.4#LUA_PACKAGE   ?= lua#g" -i config.mak
-# sed "s#IPESRCDIR ?= ..#IPESRCDIR ?= .#g" -i common.mak
-# sed 's#moc_sources  = $(addprefix moc_, $(subst .h,.cpp,$(moc_headers)))#moc_sources  = $(subst /,/moc_,$(subst .h,.cpp,$(moc_headers)))#g' -i common.mak
-# cp ./Makefile ./Makefile.bak
-# emmake make all
-# cd ..
-## maybe add /root/prefix/lib/liblua.a manually to emcc invocation
-
-cp $SCRIPT_DIR/CMakeLists.txt .
+ln $SCRIPT_DIR/CMakeLists.txt ./CMakeLists.txt
+mkdir -p install
+cp -r src/ipe/lua install/lua
+cp -r styles install/styles
+cp -r artwork install/icons
 $WORK_DIR/qt-wasm/qtbase/bin/qt-cmake . -DCMAKE_MODULE_PATH=$WORK_DIR/qt-wasm/qtbase/cmake
-cmake --build .
-
-# emcc -o final.html -sFETCH ../build/lib/libipe.so ../build/obj/ipetoipe/ipetoipe.o  $PREFIX/lib/libgslcblas.a $PREFIX/lib/libgsl.a --emrun --embed-file schedule.ipe --proxy-to-worker
-
+cmake --build . --verbose

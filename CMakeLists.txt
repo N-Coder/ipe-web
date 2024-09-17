@@ -88,3 +88,5 @@ target_include_directories(ipe PRIVATE src/include src/ipe src/ipecairo src/ipec
 target_link_libraries(ipe PRIVATE Qt6::Widgets Qt6::Svg)
 
 target_link_libraries(ipe PRIVATE "${PREFIX}/lib/libpng.a" "${PREFIX}/lib/libz.a" "${PREFIX}/lib/liblua.a" "${PREFIX}/lib/libgsl.a" "${PREFIX}/lib/libcairo.a" "${PREFIX}/lib/libfreetype.a" "${PREFIX}/lib/libspiro.a" "${PREFIX}/lib/libpixman-1.a")
+
+target_link_options(ipe PRIVATE "--embed-file" "install@${IPEPREFIX}/share/ipe/${IPEVERS}")
