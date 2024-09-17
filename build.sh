@@ -141,6 +141,7 @@ sed "s#jpeg_read_header(&cinfo, 1);#jpeg_read_header(\&cinfo, TRUE);#g" -i src/i
 ln $SCRIPT_DIR/CMakeLists.txt ./CMakeLists.txt
 mkdir -p install
 cp -r src/ipe/lua install/lua
+cp -r src/ipelets/lua install/ipelets
 cp -r styles install/styles
 cp -r artwork install/icons
 $WORK_DIR/qt-wasm/qtbase/bin/qt-cmake . -DCMAKE_MODULE_PATH=$WORK_DIR/qt-wasm/qtbase/cmake
