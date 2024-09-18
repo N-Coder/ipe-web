@@ -29,6 +29,7 @@ qt_add_executable(ipe
     src/ipecanvas/ipepdfview_qt.cpp
     src/ipeui/ipeui_common.cpp
     src/ipeui/ipeui_qt.cpp
+    src/ipelib/ipecurl_wasm.cpp
     src/ipelib/ipebase.cpp
     src/ipelib/ipeplatform.cpp
     src/ipelib/ipegeo.cpp
