@@ -49,7 +49,7 @@ int Platform::runLatex(String dir, LatexType engine, String docname) noexcept
     fprintf(stderr, "Cannot read Latex source from '%s'.\n", TEXNAME);
     return -3;
   }
-  fprintf(stderr, "Compiling %d bytes of tex in %s using %s.\n", tex.size(), (dir + "/" + TEXNAME).z(), command.z());
+  // fprintf(stderr, "Compiling %d bytes of tex in %s using %s.\n", tex.size(), (dir + "/" + TEXNAME).z(), command.z());
 
   String url = "/data?target=ipetemp.tex&command=";
   url += command;
@@ -91,7 +91,7 @@ int Platform::runLatex(String dir, LatexType engine, String docname) noexcept
   for (int i = 0; i < 1024; ++i)  // add two empty blocks
     ss.putChar('\0');
   ss << "\r\n--------------------------f0324ce8daa3cc53--\r\n";
-  fprintf(stderr, "Compressed %d bytes of mime data.\n", mime.size());
+  // fprintf(stderr, "Compressed %d bytes of mime data.\n", mime.size());
 
 
   emscripten_fetch_attr_t attr;
@@ -104,10 +104,15 @@ int Platform::runLatex(String dir, LatexType engine, String docname) noexcept
   attr.requestHeaders = headers;
   attr.requestData = (char *) mime.z();
   attr.requestDataSize = mime.size();
-  attr.attributes = EMSCRIPTEN_FETCH_LOAD_TO_MEMORY | EMSCRIPTEN_FETCH_REPLACE | EMSCRIPTEN_FETCH_SYNCHRONOUS;
-  fprintf(stderr, "About to post to %s with attr %d.\n", url.z(), attr.attributes);
-  emscripten_fetch_t *fetch = emscripten_fetch(&attr, url.z()); // Blocks here until the operation is complete.
+  attr.attributes = EMSCRIPTEN_FETCH_LOAD_TO_MEMORY | EMSCRIPTEN_FETCH_REPLACE;
+  // fprintf(stderr, "About to post to %s with attr %d.\n", url.z(), attr.attributes);
+  emscripten_fetch_t *fetch = emscripten_fetch(&attr, url.z());
   
+  while (fetch && fetch->readyState < 4) {
+    // fprintf(stderr, "Waiting for fetch in readyState %d.\n", fetch->readyState);
+    emscripten_sleep(100);
+  }
+  // if (fetch) fprintf(stderr, "readyState %d\n", fetch->readyState);
 
   String pdf;
   if (!fetch) {
@@ -125,18 +130,18 @@ int Platform::runLatex(String dir, LatexType engine, String docname) noexcept
     err << "Domain: " << fetch->url << "\n";
     err << "Error:  " << fetch->statusText << "\n";
   } else {
-    fprintf(stderr, "Finished downloading %llu bytes from URL %s.\n", fetch->numBytes, fetch->url);
-    // The data is now available at fetch->data[0] through fetch->data[fetch->numBytes-1];
+    // fprintf(stderr, "Finished downloading %llu bytes from URL %s:\n", fetch->numBytes, fetch->url);
+    // fprintf(stderr, "%s\n", String((const char *) fetch->data, fmin(fetch->numBytes,100)).z());
     pdf = String((const char *) fetch->data, fetch->numBytes);
   }
   emscripten_fetch_close(fetch);
 
   // generate logfile
-  FILE *log = Platform::fopen(LOGNAME, "wb");
+  FILE *log = Platform::fopen((dir + "/" + LOGNAME).z(), "wb");
   fprintf(log, "entering extended mode: using latexonline at '%s'\n", url.z());
 
   if (pdf.left(4) == "%PDF") {
-    FILE * out = fopen(PDFNAME, "wb");
+    FILE * out = fopen((dir + "/" + PDFNAME).z(), "wb");
     if (!out) {
       fprintf(stderr, "Cannot open '%s' for writing.\n", PDFNAME);
       return -4;

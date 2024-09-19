@@ -13,8 +13,8 @@ cd $WORK_DIR
 cd ipe
 git checkout v7.2.30
 sed "s#jpeg_read_header(&cinfo, 1);#jpeg_read_header(\&cinfo, TRUE);#g" -i src/ipelib/ipebitmap_unix.cpp
-sed "s#Platform::runLatex#Platform::runLatexNative#g" -i src/ipelib/ipeplatform.cpp
-sed "s#static int runLatex#static int runLatexNative(String dir, LatexType engine, String docname) noexcept;static int runLatex#g" -i src/include/ipebase.h
+sed "s#Platform::runLatex(#Platform::runLatexNative(#g" -i src/ipelib/ipeplatform.cpp
+grep "runLatexNative" src/include/ipebase.h || sed "s#static int runLatex#static int runLatexNative(String dir, LatexType engine, String docname) noexcept;static int runLatex#g" -i src/include/ipebase.h
 ln $SCRIPT_DIR/CMakeLists.txt ./CMakeLists.txt || true
 ln $SCRIPT_DIR/ipecurl_wasm.cpp src/ipelib/ || true
 mkdir -p install

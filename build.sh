@@ -127,7 +127,8 @@ CFLAGS="" LDFLAGS="" cmake --build . -t qtbase -t qtdeclarative -t lrelease --pa
 
 # and once again cross compile the wasm library
 cd ../qt-wasm
-./configure -qt-host-path ../qt-host/qtbase -platform wasm-emscripten -prefix $PREFIX -feature-thread # -system-zlib -qt-libjpeg -system-libpng -system-freetype
+./configure -qt-host-path ../qt-host/qtbase -platform wasm-emscripten -prefix $PREFIX \
+    -feature-thread -device-option QT_EMSCRIPTEN_ASYNCIFY=1 # -system-zlib -qt-libjpeg -system-libpng -system-freetype
 cmake --build . --parallel
 cmake --install .
 
