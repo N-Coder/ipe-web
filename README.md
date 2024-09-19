@@ -2,8 +2,8 @@
 
 This repository contains a script to build an HTML5 webassembly version of the [ipe editor](https://ipe.otfried.org/) via [emscripten](https://emscripten.org/).
 You can try the resulting web app at [ipe.n-coder.de](https://ipe.n-coder.de/ipe.html).
-While most of the UI already works, some parts (adding text, using ipelets, some dialogues,...) are broken or lead to segfaults.
-Fixing Latex compilation via latexonline is currently in the works.
+While most of ipe already works, some parts (uploading/downloading files, ipelets, changing preferences...) are still work in progress.
+Furthermore, the software should be considered alpha-level, so there may be still be broken functionalities or even crashes.
 
 [![A screenshot of ipe in a browser](screenshot.png)](https://ipe.n-coder.de/ipe.html)
 
@@ -13,4 +13,4 @@ You can abort the script at any point and restart while re-using most of the pre
 
 You will find the build results in the `download/ipe` folder and can also download a precompiled version from the [releases section](https://github.com/N-Coder/ipe-web/releases) of this repo.
 See the notes on running Qt6 WebAssembly code [here](https://doc.qt.io/qt-6/wasm.html#running-applications) and the blue box at the top of [this site](https://emscripten.org/docs/porting/pthreads.html), so you need a (local) webserver that sets the right HTTP headers (e.g. `qtwasmserver.py`) and cannot directly open the `.html` file locally.
-You can find a Docker container that serves the files with the right headers and also runs a [latexonline](https://latexonline.cc/) instance [here](https://github.com/N-Coder/latex-online/blob/master/Dockerfile.base).
+You can find a Docker container that serves the prebuilt files with the right headers and also runs a [latexonline](https://latexonline.cc/) instance [here](https://hub.docker.com/r/ncoder/ipe-web-latex-online), the Dockerfile is on [GitHub](https://github.com/N-Coder/latex-online/blob/master/Dockerfile.base).
