@@ -24,3 +24,6 @@ cp -r styles install/styles
 cp -r artwork install/icons
 $WORK_DIR/qt-wasm/qtbase/bin/qt-cmake . -DCMAKE_MODULE_PATH=$WORK_DIR/qt-wasm/qtbase/cmake
 cmake --build . --verbose
+
+mkdir -p $SCRIPT_DIR/out
+mv ipe.html ipe.js ipe.wasm ipe.worker.js qtloader.js qtlogo.svg $SCRIPT_DIR/out/
