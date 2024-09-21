@@ -132,6 +132,4 @@ cd ../qt-wasm
 cmake --build . --parallel
 cmake --install .
 
-
-## build ipe
-$SCRIPT_DIR/build_ipe.sh
+# done! now go ahead and build_ipe.sh

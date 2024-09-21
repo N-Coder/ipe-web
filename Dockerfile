@@ -4,4 +4,4 @@
 FROM debian:latest
 WORKDIR /root
 COPY ./ /root
-RUN /root/build.sh
+RUN /root/install.sh

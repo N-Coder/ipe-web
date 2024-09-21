@@ -3,10 +3,8 @@
 cd $( dirname -- "${BASH_SOURCE[0]}" )
 SCRIPT_DIR=$(pwd)
 WORK_DIR="$SCRIPT_DIR/download"
-echo $WORK_DIR
-
+OUT_DIR="$SCRIPT_DIR/out"
 export PREFIX="$SCRIPT_DIR/prefix"
-echo $PREFIX
 
 export MAKEFLAGS="-j$(nproc)"
 export EM_PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig/
@@ -25,6 +23,7 @@ export EMSDK="$WORK_DIR/emsdk"
 
 mkdir -p $SCRIPT_DIR
 mkdir -p $WORK_DIR
+mkdir -p $OUT_DIR
 mkdir -p $PKG_CONFIG_PATH
 
 [ ! -f "$EMSDK/emsdk_env.sh" ] || source $EMSDK/emsdk_env.sh
