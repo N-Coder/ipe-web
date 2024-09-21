@@ -16,7 +16,7 @@ export CFLAGS="-s USE_PTHREADS"
 export LDFLAGS="-lpthread"
 export ax_cv_c_float_words_bigendian=no
 export MESON_CROSS="$SCRIPT_DIR/emscripten-cross.txt"
-export IPEPREFIX=$PREFIX/usr/local
+export IPEPREFIX=/ipe
 export EMSDK_KEEP_DOWNLOADS=1
 export EMSDK="$WORK_DIR/emsdk"
 

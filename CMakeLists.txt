@@ -66,22 +66,22 @@ qt_add_executable(ipe
     src/ipelua/ipeluaipelet.cpp
 )
 
-set(IPEVERS "7.2.30")
+# set(IPEVERS "7.2.30")
 set(PREFIX "/root/prefix")
-set(IPEPREFIX "${PREFIX}/usr/local")
+set(IPEPREFIX "/ipe")
 set(EMSDK "/root/download/emsdk")
 
 target_compile_definitions(ipe PRIVATE IPEUI_QT)
 target_compile_definitions(ipe PRIVATE IPEBINDIR="${IPEPREFIX}/bin")
 target_compile_definitions(ipe PRIVATE IPELIBDIR="${IPEPREFIX}/lib")
 target_compile_definitions(ipe PRIVATE IPEHEADERDIR="${IPEPREFIX}/include")
-target_compile_definitions(ipe PRIVATE IPELETDIR="${IPEPREFIX}/lib/ipe/${IPEVERS}/ipelets")
-target_compile_definitions(ipe PRIVATE IPELUADIR="${IPEPREFIX}/share/ipe/${IPEVERS}/lua")
-target_compile_definitions(ipe PRIVATE IPESCRIPTDIR="${IPEPREFIX}/share/ipe/${IPEVERS}/scripts")
-target_compile_definitions(ipe PRIVATE IPESTYLEDIR="${IPEPREFIX}/share/ipe/${IPEVERS}/styles")
-target_compile_definitions(ipe PRIVATE IPEICONDIR="${IPEPREFIX}/share/ipe/${IPEVERS}/icons")
-target_compile_definitions(ipe PRIVATE IPEDOCDIR="${IPEPREFIX}/share/ipe/${IPEVERS}/doc")
-target_compile_definitions(ipe PRIVATE IPEMANDIR="${IPEPREFIX}/share/man/man1")
+target_compile_definitions(ipe PRIVATE IPELETDIR="${IPEPREFIX}/ipelets")
+target_compile_definitions(ipe PRIVATE IPELUADIR="${IPEPREFIX}/lua")
+target_compile_definitions(ipe PRIVATE IPESCRIPTDIR="${IPEPREFIX}/scripts")
+target_compile_definitions(ipe PRIVATE IPESTYLEDIR="${IPEPREFIX}/styles")
+target_compile_definitions(ipe PRIVATE IPEICONDIR="${IPEPREFIX}/icons")
+target_compile_definitions(ipe PRIVATE IPEDOCDIR="${IPEPREFIX}/doc")
+target_compile_definitions(ipe PRIVATE IPEMANDIR="${IPEPREFIX}/man")
 
 target_include_directories(ipe PRIVATE "${PREFIX}/include" "${PREFIX}/include/cairo" "${PREFIX}/include/freetype2")
 target_include_directories(ipe PRIVATE "${EMSDK}/upstream/emscripten/cache/sysroot/include/")
@@ -91,5 +91,5 @@ target_link_libraries(ipe PRIVATE Qt6::Widgets Qt6::Svg)
 target_link_libraries(ipe PRIVATE "${PREFIX}/lib/libpng.a" "${PREFIX}/lib/libz.a" "${PREFIX}/lib/liblua.a" "${PREFIX}/lib/libgsl.a" "${PREFIX}/lib/libcairo.a" "${PREFIX}/lib/libfreetype.a" "${PREFIX}/lib/libspiro.a" "${PREFIX}/lib/libpixman-1.a")
 
 target_link_options(ipe PRIVATE
-    "--embed-file" "install@${IPEPREFIX}/share/ipe/${IPEVERS}"
+    "--embed-file" "install@/${IPEPREFIX}"
     -s MAXIMUM_MEMORY=1GB -sASYNCIFY -Os)
