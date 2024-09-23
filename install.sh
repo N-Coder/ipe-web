@@ -83,7 +83,7 @@ cd $WORK_DIR
 [ -d "libspiro" ] || git clone https://github.com/fontforge/libspiro.git
 cd libspiro
 git checkout 20240903
-emconfigure autoreconf -i
+emconfigure autoreconf -i || emconfigure autoreconf -i # sometimes needs to be run twice
 emconfigure automake --foreign -Wall
 emconfigure ./configure --prefix=$PREFIX
 emmake make
