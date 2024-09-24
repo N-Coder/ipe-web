@@ -13,4 +13,7 @@ You can abort the script at any point and restart while re-using most of the pre
 
 You will find the build results in the `download/ipe` folder and can also download a precompiled version from the [releases section](https://github.com/N-Coder/ipe-web/releases) of this repo.
 See the notes on running Qt6 WebAssembly code [here](https://doc.qt.io/qt-6/wasm.html#running-applications) and the blue box at the top of [this site](https://emscripten.org/docs/porting/pthreads.html), so you need a (local) webserver that sets the right HTTP headers (e.g. `qtwasmserver.py`) and cannot directly open the `.html` file locally.
-You can find a Docker container that serves the prebuilt files with the right headers and also runs a [latexonline](https://latexonline.cc/) instance [here](https://hub.docker.com/r/ncoder/ipe-web-latex-online), the Dockerfile is on [GitHub](https://github.com/N-Coder/latex-online/blob/master/Dockerfile.base).
+You can find a Docker container that serves the prebuilt files with the right headers and also runs the required [latexonline](https://latexonline.cc/) instance [here](https://hub.docker.com/r/ncoder/ipe-web-latex-online), the Dockerfile is on [GitHub](https://github.com/N-Coder/latex-online/blob/master/Dockerfile.base).
+
+[![A picture of people using ipe-web with a pen on an iPad](foto-gd.jpg)]([https://ipe.n-coder.de/ipe.html](https://graphdrawing.github.io/gd2024/))
+> ipe-web being used on an iPad with pen input at [GD 2024](https://graphdrawing.github.io/gd2024/). Picture by [mikhubphoto](https://mikhubphoto.at/)
