@@ -120,16 +120,17 @@ cd $WORK_DIR
 rm -rf qt-everywhere-src-6.7.2/qtwebengine
 [ -d "qt-host" ] || cp -r qt-everywhere-src-6.7.2 qt-host
 [ -d "qt-wasm" ] || cp -r qt-everywhere-src-6.7.2 qt-wasm
-# once for the host tools
-cd qt-host
+
+## once for the host tools
+cd $WORK_DIR/qt-host
 CFLAGS="" LDFLAGS="" ./configure -prefix $PWD/qtbase -no-opengl
 CFLAGS="" LDFLAGS="" cmake --build . -t qtbase -t qtdeclarative -t lrelease --parallel
 
-# and once again cross compile the wasm library
-cd ../qt-wasm
+## and once again cross compile the wasm library
+cd $WORK_DIR/qt-wasm
 ./configure -qt-host-path ../qt-host/qtbase -platform wasm-emscripten -prefix $PREFIX \
     -feature-thread -device-option QT_EMSCRIPTEN_ASYNCIFY=1 # -system-zlib -qt-libjpeg -system-libpng -system-freetype
 cmake --build . --parallel
 cmake --install .
 
-# done! now go ahead and build_ipe.sh
+## done! now go ahead and build_ipe.sh

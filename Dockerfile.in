@@ -1,0 +1,16 @@
+# ./make-dockerfile.py
+# docker build -t ncoder/ipe-web-build:latest -f Dockerfile .
+# docker run --rm --name ipe-web-build --volume $(pwd)/out:/root/out:rw,z ncoder/ipe-web-build:latest
+# > ./build_ipe.sh
+
+FROM debian:latest
+SHELL ["/bin/bash", "-c"]
+WORKDIR /root
+COPY emscripten-cross.txt env.sh /root
+
+## the following line will be replaced by make-dockerfile.py
+COPY install.sh /root
+RUN /root/install.sh
+## end
+
+COPY install.sh build_ipe.sh CMakeLists.txt ipecurl_wasm.cpp /root
