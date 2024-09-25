@@ -1,6 +1,6 @@
 # ./make-dockerfile.py
-# docker build -t ncoder/ipe-web-build:latest -f Dockerfile .
-# docker run --rm --name ipe-web-build --volume $(pwd)/out:/root/out:rw,z ncoder/ipe-web-build:latest
+# docker build --tag ncoder/ipe-web-build:latest --file Dockerfile .
+# docker run -ti --name ipe-web-build --volume $(pwd)/out:/root/out:rw,z ncoder/ipe-web-build:latest
 # > ./build_ipe.sh
 
 FROM debian:latest
