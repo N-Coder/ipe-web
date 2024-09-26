@@ -16,7 +16,8 @@ sed "s#jpeg_read_header(&cinfo, 1);#jpeg_read_header(\&cinfo, TRUE);#g" -i src/i
 sed "s#Platform::runLatex(#Platform::runLatexNative(#g" -i src/ipelib/ipeplatform.cpp
 grep "runLatexNative" src/include/ipebase.h || sed "s#static int runLatex#static int runLatexNative(String dir, LatexType engine, String docname) noexcept;static int runLatex#g" -i src/include/ipebase.h
 [ -f "CMakeLists.txt" ] || ln -s $SCRIPT_DIR/CMakeLists.txt ./CMakeLists.txt
-[ -f "src/ipelib/ipecurl_wasm.cp" ] || ln -s $SCRIPT_DIR/ipecurl_wasm.cpp src/ipelib/
+[ -f "src/ipelib/ipecurl_wasm.cpp" ] || ln -s $SCRIPT_DIR/ipecurl_wasm.cpp src/ipelib/
+rm -rf install
 mkdir -p install
 cp -r src/ipe/lua install/lua
 cp -r src/ipelets/lua install/ipelets
