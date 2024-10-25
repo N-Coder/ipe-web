@@ -1,5 +1,9 @@
 # ipe-web
 
+> [!IMPORTANT]
+> By now, ipe has [built-in support](https://github.com/otfried/ipe/tree/master/src/ipejs) for a JavaScript UI.
+> This repository, that still uses the more cumbersome Qt for WebAssembly UI, is mostly kept for archival purposes.
+
 This repository contains a script to build an HTML5 webassembly version of the [ipe editor](https://ipe.otfried.org/) via [emscripten](https://emscripten.org/).
 You can try the resulting web app at [ipe.n-coder.de](https://ipe.n-coder.de/ipe.html).
 While most of ipe already works, some parts (uploading/downloading files, ipelets, changing preferences...) are still work in progress.
